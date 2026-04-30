@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Derived works of EDEN — research notes</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <style>
+    :root {
+      --max-width: 740px;
+      --text: #292929;
+      --bg: #fff;
+      --subtle: #757575;
+      --accent: #1a8917;
+      --code-bg: #f6f8fa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'source-serif-pro', Georgia, Cambria, "Times New Roman", Times, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      font-size: 18px;
+    }
+    article {
+      max-width: var(--max-width);
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    h1 { font-size: 2.2rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.6rem; margin: 2rem 0 0.8rem; }
+    h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; }
+    p { margin: 1rem 0; }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5rem auto;
+    }
+    figcaption, .caption {
+      text-align: center;
+      color: var(--subtle);
+      font-size: 0.9rem;
+      margin-top: -0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+    code {
+      font-family: Menlo, Monaco, "Courier New", monospace;
+      font-size: 0.9em;
+    }
+    p code, li code {
+      background: var(--code-bg);
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+    }
+    blockquote {
+      border-left: 3px solid #ccc;
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--subtle);
+    }
+    .subtitle {
+      color: var(--subtle);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .katex-display { margin: 1.5rem 0; overflow-x: auto; }
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem auto;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    th { background: var(--code-bg); }
+
+    /* Algorithm / pseudocode block */
+    .algo {
+      margin: 2rem 0;
+      padding: 0;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      background: #fbfcfd;
+      font-family: 'source-serif-pro', Georgia, serif;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+    .algo .algo-title {
+      background: #eef2f6;
+      border-bottom: 1px solid #d0d7de;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      text-align: left;
+      margin: 0;
+    }
+    .algo .algo-section {
+      padding: 0.6rem 1rem 0.2rem;
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      color: #4a5260;
+      font-size: 0.9rem;
+    }
+    .algo .algo-side {
+      font-variant: normal;
+      letter-spacing: 0;
+      font-weight: 400;
+      color: var(--subtle);
+      font-style: italic;
+      margin-left: 0.4em;
+    }
+    .algo ol.algo-steps {
+      margin: 0.2rem 0 0.4rem 0;
+      padding-left: 3rem;
+    }
+    .algo ol.algo-steps li {
+      margin: 0.15rem 0;
+      padding-left: 0.25rem;
+    }
+    .algo ol.algo-steps li.algo-diff {
+      background: #fff7d6;
+      border-left: 3px solid #d4a017;
+      padding: 0.2rem 0.4rem 0.2rem 0.25rem;
+      margin-left: 0;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+    .algo .algo-comment {
+      color: var(--subtle);
+      font-style: italic;
+      font-size: 0.88em;
+    }
+    .algo table.algo-choices {
+      width: calc(100% - 2rem);
+      margin: 0.3rem 1rem 1rem;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .algo table.algo-choices td {
+      border: none;
+      border-top: 1px solid #e3e7ec;
+      padding: 0.45rem 0.6rem;
+      vertical-align: middle;
+    }
+    .algo table.algo-choices tr:first-child td { border-top: none; }
+    .algo .algo-tag {
+      display: inline-block;
+      padding: 0.1em 0.55em;
+      border-radius: 3px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .algo .tag-tq { background: #e8f0fe; color: #1a56c4; }
+    .algo .tag-eb { background: #e6f4ea; color: #1e7c3a; }
+    .algo .tag-eu { background: #efe9fb; color: #5b3aa6; }
+
+    /* Post tags (front-matter metadata for TDS) */
+    .post-tags {
+      margin: 2.5rem 0 1rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #eaeaea;
+      font-size: 0.85rem;
+      color: var(--subtle);
+    }
+    .post-tags .tag {
+      display: inline-block;
+      background: var(--code-bg);
+      color: var(--text);
+      padding: 0.15em 0.6em;
+      margin: 0 0.25em 0.3em 0;
+      border-radius: 12px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <article>
+    <h1 id="derived-works-of-eden--research-notes">Derived works of EDEN — research notes</h1>
+
+<p>Notes for the §Takeaway paragraph about subsequent work that builds on or
+applies EDEN. Sourced from the four papers/pages the author flagged.</p>
+
+<h2 id="1-sdr--succinct-document-representation">1. SDR — Succinct Document Representation</h2>
+
+<ul>
+  <li><strong>Citation</strong>: N. Cohen, A. Portnoy, B. Fetahu, A. Ingber, <em>SDR: Efficient
+Neural Re-ranking using Succinct Document Representation</em>, ACL 2022.</li>
+  <li><strong>URL</strong>: https://aclanthology.org/2022.acl-long.457/</li>
+  <li><strong>Domain</strong>: Information retrieval / neural re-ranking.</li>
+  <li><strong>What it does</strong>: Compresses BERT intermediate document representations
+for late-interaction re-ranking. Two-stage pipeline:
+(1) a novel autoencoder using the document’s textual content in both
+encoding and decoding, then (2) modern quantization of the autoencoder
+output.</li>
+  <li><strong>Relationship to EDEN</strong>: Uses EDEN in the quantization stage (per the
+author’s own note). The authors include Amit Portnoy (also a co-author
+of EDEN), so this is a same-author follow-on application rather than a
+third-party citation.</li>
+  <li><strong>Headline result</strong>: 4×–11.6× higher compression rates for the same
+ranking quality on MSMARCO passage re-ranking; 7.7× on TREC CAR.</li>
+  <li><strong>Framing for the post</strong>: an early downstream application of EDEN to
+embedding storage and retrieval.</li>
+</ul>
+
+<h2 id="2-ms-eden-quartet-ii">2. MS-EDEN (Quartet II)</h2>
+
+<ul>
+  <li><strong>Citation</strong>: A. Panferov et al., <em>Quartet II: Accurate LLM Pre-Training
+in NVFP4 by Improved Unbiased Gradient Estimation</em>, 2026 (arXiv
+2601.22813 per the EmergentMind page).</li>
+  <li><strong>URL</strong>: https://www.emergentmind.com/topics/ms-eden-quantization-operator
+(topic page; primary paper at arXiv 2601.22813)</li>
+  <li><strong>Domain</strong>: Low-precision LLM pre-training (NVFP4 on NVIDIA Blackwell
+GPUs).</li>
+  <li><strong>What it does</strong>: Defines an unbiased, low-MSE quantization operator
+(“MS-EDEN”) for the NVFP4 micro-scaling format. The construction:
+    <ul>
+      <li>Apply a Randomized Hadamard Transform per rotation group (R = 128).</li>
+      <li>Round to NVFP4 with soft clipping.</li>
+      <li>Compute an EDEN-style correction factor
+<code class="language-plaintext highlighter-rouge">S_h = ⟨x_RHT, x_RHT⟩ / ⟨x_RHT, x_RTN⟩</code> per group.</li>
+      <li>Merge <code class="language-plaintext highlighter-rouge">S_h</code> into the FP8 group scale via unbiased stochastic rounding.
+This makes <code class="language-plaintext highlighter-rouge">S_h</code> an unbiasing scale on top of an RTN-quantized rotated
+vector — a direct micro-scale adaptation of EDEN-unbiased’s
+<code class="language-plaintext highlighter-rouge">S = ⟨x, q⟩ / ⟨q, q⟩</code> style ratio (with the inner-product roles reversed
+for the unbiased target).</li>
+    </ul>
+  </li>
+  <li><strong>Relationship to EDEN</strong>: Direct extension. The name “MS-EDEN” =
+“Micro-Scaling EDEN” telegraphs the lineage. The correction factor is
+literally an EDEN-style scale, applied at micro-scale (per group)
+instead of per-vector, and routed into the FP8 group scale rather than
+applied at decode time.</li>
+  <li><strong>Headline result</strong>: ~2× MSE reduction vs. stochastic rounding while
+remaining unbiased. End-to-end ~4.2× speedup over BF16 on NVIDIA RTX
+5090 for linear layers; up to 25% closer to BF16 BPB during 1.9B
+pretraining.</li>
+  <li><strong>Framing for the post</strong>: training-time quantization. The clearest
+example of EDEN’s scale construction being adapted to a new precision
+format (NVFP4) and a new operating regime (per-group, hardware-aligned).</li>
+</ul>
+
+<h2 id="3-higgs">3. HIGGS</h2>
+
+<ul>
+  <li><strong>Citation</strong>: V. Malinovskii, A. Panferov, I. Ilin, H. Guo, P.
+Richtárik, D. Alistarh, <em>HIGGS: Pushing the Limits of Large Language
+Model Quantization via the Linearity Theorem</em>, NAACL 2025.</li>
+  <li><strong>URL</strong>: https://aclanthology.org/2025.naacl-long.543/</li>
+  <li><strong>Domain</strong>: Data-free post-training quantization (PTQ) of LLM weights.</li>
+  <li><strong>What it does</strong>: A “linearity theorem” relating per-layer
+reconstruction error to model perplexity increase, used to motivate
+(1) HIGGS itself: a data-free quantization method using <strong>Hadamard
+rotations and MSE-optimal grids</strong> (and (2) an optimal non-uniform
+per-layer bit-allocation scheme via dynamic programming).</li>
+  <li><strong>Relationship to EDEN</strong>: Per the author’s note, “uses a generalization
+of EDEN”. Concretely: HIGGS’s recipe — randomized Hadamard rotation +
+MSE-optimal grid (lattice/Lloyd-Max-style codebook) — is the EDEN
+recipe (rotate → quantize on a known-distribution-optimal grid),
+generalized from scalar Lloyd–Max to vector lattice quantization on
+groups.</li>
+  <li><strong>Headline result</strong>: Outperforms NF4 and other data-free baselines on
+Llama-family models.</li>
+  <li><strong>Framing for the post</strong>: the rotation + distribution-aware-grid
+pattern from EDEN, extended to vector quantization for weight-only PTQ.</li>
+</ul>
+
+<h2 id="4-aqua-kv-higgs-applied-to-kv-cache">4. AQUA-KV (HIGGS applied to KV-cache)</h2>
+
+<ul>
+  <li><strong>Citation</strong>: A. Shutova et al., <em>Cache Me If You Must: Adaptive
+Key-Value Quantization for Large Language Models</em>, ICML 2025 (arXiv
+2501.19392).</li>
+  <li><strong>URL</strong>: https://arxiv.org/html/2501.19392v2</li>
+  <li><strong>Domain</strong>: KV-cache compression for long-context LLM inference.</li>
+  <li><strong>What it does</strong>: Trains compact linear predictors that predict KV
+vectors from previous-layer KVs and quantizes the residuals. Uses HIGGS
+as the backbone quantizer (HIGGS itself uses RHT + MSE-optimal grids,
+which generalizes EDEN — see #3 above).</li>
+  <li><strong>Relationship to EDEN</strong>: Indirect — through HIGGS. AQUA-KV explicitly
+uses HIGGS as its preferred backbone quantizer, and HIGGS uses a
+generalization of EDEN. So AQUA-KV’s KV-cache-compression result
+effectively rides on the rotation + distribution-aware-grid pipeline
+inherited from EDEN.</li>
+  <li><strong>Headline result</strong>: Near-lossless inference at 2–2.5 bits per value
+on Llama-3.x 70B; one-shot calibration in 1–6 hours on a single GPU.</li>
+  <li><strong>Framing for the post</strong>: KV-cache compression. Closes the loop on the
+TurboQuant comparison: KV-cache is the application TurboQuant-prod was
+pitched at, and AQUA-KV (via HIGGS via EDEN) is the EDEN-lineage answer
+in the same space.</li>
+</ul>
+
+<h2 id="quick-relationship-map">Quick relationship map</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>EDEN (NeurIPS 2021 / ICML 2022)
+├── SDR (ACL 2022) — uses EDEN for the quantization stage of doc re-ranking
+├── MS-EDEN / Quartet II (2026) — micro-scaling EDEN for NVFP4 training
+└── HIGGS (NAACL 2025) — generalization of EDEN to vector quantization (data-free PTQ)
+    └── AQUA-KV (ICML 2025) — uses HIGGS as backbone for KV-cache compression
+</code></pre></div></div>
+
+<p>So three direct applications + one transitive (via HIGGS).</p>
+
+<h2 id="drafting-notes-for-the-post-paragraph">Drafting notes for the post paragraph</h2>
+
+<h3 id="what-we-want-to-convey">What we want to convey</h3>
+
+<ol>
+  <li>EDEN was originally for <strong>distributed mean estimation</strong> (the setting
+the original DRIVE/EDEN papers solve). The post should remind the
+reader of this since it’s the original motivation, but the §How EDEN
+quantizes a vector section already abstracts it as “vector
+quantization”.</li>
+  <li>EDEN has since been used / extended in several settings:
+embedding storage and retrieval (SDR), training-time quantization
+(MS-EDEN/Quartet II), data-free weight PTQ (HIGGS), and KV-cache
+compression (AQUA-KV via HIGGS).</li>
+  <li>We’re not trying to be exhaustive — these are illustrative.</li>
+</ol>
+
+<h3 id="honesty-considerations">Honesty considerations</h3>
+
+<ul>
+  <li>SDR is co-authored by Amit; should be cited but might not need to be
+flagged separately. The implementation list above already mentions
+Portnoy’s repos, so a co-authored downstream paper is in keeping with
+the post’s voice.</li>
+  <li>AQUA-KV’s link to EDEN is transitive. The honest framing is “EDEN’s
+scale-aware-rotation pattern” influencing HIGGS, with AQUA-KV as the
+KV-cache application of HIGGS. We could either (a) list HIGGS and
+separately note AQUA-KV uses it for KV-cache, or (b) just list HIGGS
+and skip AQUA-KV. Given the post’s prior emphasis on KV-cache as
+TurboQuant’s pitch, including AQUA-KV ties back to the post’s framing.</li>
+  <li>“Generalizes” / “uses” / “adapts” / “extends” — pick verbs that match.
+    <ul>
+      <li>SDR: <strong>uses</strong> EDEN (in its quantization stage)</li>
+      <li>MS-EDEN: <strong>adapts/extends</strong> EDEN (micro-scaling, group-wise variant)</li>
+      <li>HIGGS: <strong>generalizes</strong> EDEN (to vector quantization)</li>
+      <li>AQUA-KV: builds on HIGGS, so “applies the HIGGS extension” or
+“uses HIGGS as backbone”</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="suggested-placement">Suggested placement</h3>
+
+<p>Inside §Takeaway, between the “Full EDEN implementations are available…”
+paragraph and the closing pointer paragraphs. New paragraph signals
+“EDEN’s family of derived methods”.</p>
+
+<h3 id="draft-paragraph-for-the-post">Draft paragraph (for the post)</h3>
+
+<p><strong>Option A — flat list:</strong></p>
+
+<blockquote>
+  <p>EDEN was originally developed for <strong>distributed mean estimation</strong> in
+federated/distributed training, but the same rotation + scale
+construction has since been applied across other settings: vector
+compression for embedding retrieval (<a href="https://aclanthology.org/2022.acl-long.457/">SDR</a> <a href="#ref8">[8]</a>),
+training-time quantization (<a href="...">MS-EDEN, in Quartet II</a>
+<a href="#ref9">[9]</a>), data-free LLM weight quantization (<a href="https://aclanthology.org/2025.naacl-long.543/">HIGGS</a>
+<a href="#ref10">[10]</a>, which generalizes EDEN to vector quantization), and
+KV-cache compression (<a href="https://arxiv.org/abs/2501.19392">AQUA-KV</a>
+<a href="#ref11">[11]</a>, built on HIGGS).</p>
+</blockquote>
+
+<p><strong>Option B — narrative arc:</strong></p>
+
+<blockquote>
+  <p>EDEN was originally developed for <strong>distributed mean estimation</strong> in
+federated/distributed training. The same rotation + closed-form-scale
+pattern has since been applied to embedding compression for neural
+retrieval (<a href="https://aclanthology.org/2022.acl-long.457/">SDR</a> <a href="#ref8">[8]</a>),
+generalized to vector quantization for data-free LLM weight
+compression (<a href="https://aclanthology.org/2025.naacl-long.543/">HIGGS</a>
+<a href="#ref10">[10]</a>), adapted as a micro-scaled, hardware-aligned variant
+for NVFP4 training (<a href="...">MS-EDEN in Quartet II</a> <a href="#ref9">[9]</a>), and
+applied to KV-cache compression via HIGGS (<a href="https://arxiv.org/abs/2501.19392">AQUA-KV</a>
+<a href="#ref11">[11]</a>).</p>
+</blockquote>
+
+<p>I prefer <strong>B</strong> — the verbs (“applied”, “generalized”, “adapted”,
+“applied via”) accurately describe each relationship, and the chronology
+arcs from 2022 (SDR) → 2025 (HIGGS, AQUA-KV) → 2026 (MS-EDEN), which
+also tracks the broadening of scope from a single use case to weight
+PTQ and training quantization.</p>
+
+<h3 id="reference-entries-to-add">Reference entries to add</h3>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">id=</span><span class="s">"ref8"</span><span class="nt">&gt;&lt;/a&gt;</span><span class="p">[</span><span class="nv">8] N. Cohen, A. Portnoy, B. Fetahu, A. Ingber, [SDR: Efficient Neural Re-ranking using Succinct Document Representation</span><span class="p">](</span><span class="sx">https://aclanthology.org/2022.acl-long.457/</span><span class="p">)</span> <span class="p">(</span><span class="sx">2022</span><span class="p">)</span>, ACL 2022.
+
+<span class="nt">&lt;a</span> <span class="na">id=</span><span class="s">"ref9"</span><span class="nt">&gt;&lt;/a&gt;</span><span class="p">[</span><span class="nv">9] A. Panferov et al., [Quartet II: Accurate LLM Pre-Training in NVFP4 by Improved Unbiased Gradient Estimation</span><span class="p">](</span><span class="sx">https://arxiv.org/abs/2601.22813</span><span class="p">)</span> <span class="p">(</span><span class="sx">2026</span><span class="p">)</span>, arXiv:2601.22813.
+
+<span class="nt">&lt;a</span> <span class="na">id=</span><span class="s">"ref10"</span><span class="nt">&gt;&lt;/a&gt;</span><span class="p">[</span><span class="nv">10] V. Malinovskii, A. Panferov, I. Ilin, H. Guo, P. Richtárik, D. Alistarh, [HIGGS: Pushing the Limits of Large Language Model Quantization via the Linearity Theorem</span><span class="p">](</span><span class="sx">https://aclanthology.org/2025.naacl-long.543/</span><span class="p">)</span> <span class="p">(</span><span class="sx">2025</span><span class="p">)</span>, NAACL 2025.
+
+<span class="nt">&lt;a</span> <span class="na">id=</span><span class="s">"ref11"</span><span class="nt">&gt;&lt;/a&gt;</span><span class="p">[</span><span class="nv">11] A. Shutova et al., [Cache Me If You Must: Adaptive Key-Value Quantization for Large Language Models</span><span class="p">](</span><span class="sx">https://arxiv.org/abs/2501.19392</span><span class="p">)</span> <span class="p">(</span><span class="sx">2025</span><span class="p">)</span>, ICML 2025.
+</code></pre></div></div>
+
+<p>Caveats:</p>
+<ul>
+  <li>Quartet II’s arXiv ID <code class="language-plaintext highlighter-rouge">2601.22813</code> is from the EmergentMind topic page;
+worth double-checking before publication (the date “30 Jan 2026”
+suggests it’s a real arXiv paper, but I haven’t verified the ID
+directly).</li>
+  <li>AQUA-KV authors are listed in the arXiv HTML as “Alina Shutova,
+Vladimir Malinovskii, Vage Egiazarian, Denis Kuznedelev, Denis Mazur,
+Nikita Surkov, Ivan Ermakov, Dan Alistarh” — using “et al.” for
+brevity matches the style of references already in the post that
+shorten long author lists. Let me know if you’d rather list them all.</li>
+  <li>HIGGS author ordering matches the citation block on aclanthology.org.</li>
+  <li>SDR is co-authored by Amit Portnoy (the post author). No special
+flagging needed since the byline is already at the top of the post,
+but worth being aware of.</li>
+</ul>
+
+
+    
+  </article>
+
+  <!-- KaTeX rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "\\[", right: "\\]", display: true}
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

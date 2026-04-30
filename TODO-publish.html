@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TODO: Publish to Towards Data Science</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <style>
+    :root {
+      --max-width: 740px;
+      --text: #292929;
+      --bg: #fff;
+      --subtle: #757575;
+      --accent: #1a8917;
+      --code-bg: #f6f8fa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'source-serif-pro', Georgia, Cambria, "Times New Roman", Times, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      font-size: 18px;
+    }
+    article {
+      max-width: var(--max-width);
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    h1 { font-size: 2.2rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.6rem; margin: 2rem 0 0.8rem; }
+    h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; }
+    p { margin: 1rem 0; }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5rem auto;
+    }
+    figcaption, .caption {
+      text-align: center;
+      color: var(--subtle);
+      font-size: 0.9rem;
+      margin-top: -0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+    code {
+      font-family: Menlo, Monaco, "Courier New", monospace;
+      font-size: 0.9em;
+    }
+    p code, li code {
+      background: var(--code-bg);
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+    }
+    blockquote {
+      border-left: 3px solid #ccc;
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--subtle);
+    }
+    .subtitle {
+      color: var(--subtle);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .katex-display { margin: 1.5rem 0; overflow-x: auto; }
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem auto;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    th { background: var(--code-bg); }
+
+    /* Algorithm / pseudocode block */
+    .algo {
+      margin: 2rem 0;
+      padding: 0;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      background: #fbfcfd;
+      font-family: 'source-serif-pro', Georgia, serif;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+    .algo .algo-title {
+      background: #eef2f6;
+      border-bottom: 1px solid #d0d7de;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      text-align: left;
+      margin: 0;
+    }
+    .algo .algo-section {
+      padding: 0.6rem 1rem 0.2rem;
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      color: #4a5260;
+      font-size: 0.9rem;
+    }
+    .algo .algo-side {
+      font-variant: normal;
+      letter-spacing: 0;
+      font-weight: 400;
+      color: var(--subtle);
+      font-style: italic;
+      margin-left: 0.4em;
+    }
+    .algo ol.algo-steps {
+      margin: 0.2rem 0 0.4rem 0;
+      padding-left: 3rem;
+    }
+    .algo ol.algo-steps li {
+      margin: 0.15rem 0;
+      padding-left: 0.25rem;
+    }
+    .algo ol.algo-steps li.algo-diff {
+      background: #fff7d6;
+      border-left: 3px solid #d4a017;
+      padding: 0.2rem 0.4rem 0.2rem 0.25rem;
+      margin-left: 0;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+    .algo .algo-comment {
+      color: var(--subtle);
+      font-style: italic;
+      font-size: 0.88em;
+    }
+    .algo table.algo-choices {
+      width: calc(100% - 2rem);
+      margin: 0.3rem 1rem 1rem;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .algo table.algo-choices td {
+      border: none;
+      border-top: 1px solid #e3e7ec;
+      padding: 0.45rem 0.6rem;
+      vertical-align: middle;
+    }
+    .algo table.algo-choices tr:first-child td { border-top: none; }
+    .algo .algo-tag {
+      display: inline-block;
+      padding: 0.1em 0.55em;
+      border-radius: 3px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .algo .tag-tq { background: #e8f0fe; color: #1a56c4; }
+    .algo .tag-eb { background: #e6f4ea; color: #1e7c3a; }
+    .algo .tag-eu { background: #efe9fb; color: #5b3aa6; }
+
+    /* Post tags (front-matter metadata for TDS) */
+    .post-tags {
+      margin: 2.5rem 0 1rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #eaeaea;
+      font-size: 0.85rem;
+      color: var(--subtle);
+    }
+    .post-tags .tag {
+      display: inline-block;
+      background: var(--code-bg);
+      color: var(--text);
+      padding: 0.15em 0.6em;
+      margin: 0 0.25em 0.3em 0;
+      border-radius: 12px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <article>
+    <h1 id="todo-publish-to-towards-data-science">TODO: Publish to Towards Data Science</h1>
+
+<p>Steps to take <a href="/EDEN-vs-turboQuant-blog-preview/">index.md</a> from local Jekyll draft to a submitted TDS
+post on the Contributor Portal.</p>
+
+<p>Reference: <a href=".github/copilot-instructions.md">/memories/repo/tds-wordpress-porting.md</a> (porting cheat sheet).</p>
+
+<hr />
+
+<h2 id="1-pre-submission-audit">1. Pre-submission audit</h2>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Run the <a href=".github/skills/tds-submission-audit/SKILL.md"><code class="language-plaintext highlighter-rouge">tds-submission-audit</code></a> skill against <a href="/EDEN-vs-turboQuant-blog-preview/">index.md</a>.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Resolve any FAIL / NEEDS REVIEW items it surfaces.</li>
+</ul>
+
+<h2 id="2-featured-image">2. Featured image</h2>
+
+<p>TDS requires one. Must be commercially licensable, no logos / text overlays /
+real people.</p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Decide on source:
+    <ul class="task-list">
+      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Reuse a chart from <a href="figures/">figures/</a> (Figure 2 or 3 are candidates), <strong>or</strong></li>
+      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Generate one with an AI tool whose licence permits commercial use (record the prompt), <strong>or</strong></li>
+      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Find a CC0 image on Unsplash / Pexels / similar.</li>
+    </ul>
+  </li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Save final asset.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Note the attribution string for the WP caption.</li>
+</ul>
+
+<h2 id="3-pre-render-figure-1-algorithm-box">3. Pre-render Figure 1 (algorithm box)</h2>
+
+<p>The custom HTML <code class="language-plaintext highlighter-rouge">&lt;figure class="algo"&gt;</code> block won’t survive paste into WordPress.</p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Render <a href="/EDEN-vs-turboQuant-blog-preview/">index.md</a> locally (<code class="language-plaintext highlighter-rouge">bundle exec jekyll serve</code>).</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Screenshot the algorithm box at high DPI, <strong>or</strong> script a headless render.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Save as <code class="language-plaintext highlighter-rouge">figures/algo-box.png</code>.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Treat as a normal figure: it gets uploaded to the Media Library and the
+    existing caption is reused.</li>
+</ul>
+
+<h2 id="4-tds-contributor-portal-access">4. TDS Contributor Portal access</h2>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Confirm contributor account is approved.
+    Portal: <a href="https://contributor.insightmediagroup.io/">https://contributor.insightmediagroup.io/</a></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Author profile has real name, photo, and bio.</li>
+</ul>
+
+<h2 id="5-port-to-wordpress">5. Port to WordPress</h2>
+
+<p>In the WP block editor (Posts → Add New Post). Following
+<a href=".github/copilot-instructions.md">/memories/repo/tds-wordpress-porting.md</a>:</p>
+
+<h3 id="sidebar-fields-not-body">Sidebar fields (NOT body)</h3>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Title</strong> field: copy the H1 from <a href="/EDEN-vs-turboQuant-blog-preview/">index.md</a>. Title case.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Subheading</strong> field (post settings sidebar): copy from <code class="language-plaintext highlighter-rouge">&lt;p class="subtitle"&gt;</code>.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Post Excerpt</strong> (optional): same text as subtitle.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Featured image</strong>: upload to the dedicated slot, add caption with attribution.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Tags</strong> (≤ 5): <code class="language-plaintext highlighter-rouge">vector-quantization</code>, <code class="language-plaintext highlighter-rouge">kv-cache</code>, <code class="language-plaintext highlighter-rouge">distributed-training</code>, <code class="language-plaintext highlighter-rouge">llm-inference</code>.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Category</strong> (1): pick best fit, or leave for editors.</li>
+</ul>
+
+<h3 id="body-content">Body content</h3>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Delete H1, <code class="language-plaintext highlighter-rouge">&lt;p class="subtitle"&gt;</code>, <code class="language-plaintext highlighter-rouge">&lt;p class="byline"&gt;</code> before pasting.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Convert <code class="language-plaintext highlighter-rouge">## </code> headings → Heading block, level H2.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Each paragraph → Paragraph block.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Each inline <code class="language-plaintext highlighter-rouge">$...$</code> → Shortcode block with MathJax-LaTeX syntax.
+    Plugin docs: <a href="https://wordpress.org/plugins/mathjax-latex/">https://wordpress.org/plugins/mathjax-latex/</a></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Each image:
+    <ul class="task-list">
+      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Upload PNG to Media Library (don’t paste).</li>
+      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Insert as Image block.</li>
+      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Paste the existing <code class="language-plaintext highlighter-rouge">Figure N: ...</code> caption into the block’s caption field.</li>
+      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Keep the <code class="language-plaintext highlighter-rouge">Image by author [5]</code> attribution; link <code class="language-plaintext highlighter-rouge">[5]</code> to the reference if anchors survive, otherwise leave as plain text.</li>
+    </ul>
+  </li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Algorithm box: insert <code class="language-plaintext highlighter-rouge">algo-box.png</code> as Image block with the existing Figure 1 caption.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />References list: List block (numbered). Keep TDS format <code class="language-plaintext highlighter-rouge">[X] Authors, Title (Year), Source</code> with title as the link.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Section breaks (if desired): Separator block, <strong>Dotted</strong> style.</li>
+</ul>
+
+<h2 id="6-sanity-check-in-wp">6. Sanity-check in WP</h2>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />All math renders.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />All images visible, captions correct.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />No leftover Markdown artefacts (<code class="language-plaintext highlighter-rouge">&lt;!-- TODO --&gt;</code>, raw HTML tags, custom CSS classes).</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Click the preview (laptop) icon and skim the rendered post.</li>
+</ul>
+
+<h2 id="7-submit">7. Submit</h2>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Click <strong>Submit for Review</strong> (top-right of the editor).</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Don’t make further changes once it’s in the queue (unless an editor asks).</li>
+</ul>
+
+
+    
+  </article>
+
+  <!-- KaTeX rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "\\[", right: "\\]", display: true}
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

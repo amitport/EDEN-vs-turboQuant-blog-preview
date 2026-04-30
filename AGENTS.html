@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AGENTS.md</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <style>
+    :root {
+      --max-width: 740px;
+      --text: #292929;
+      --bg: #fff;
+      --subtle: #757575;
+      --accent: #1a8917;
+      --code-bg: #f6f8fa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'source-serif-pro', Georgia, Cambria, "Times New Roman", Times, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      font-size: 18px;
+    }
+    article {
+      max-width: var(--max-width);
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    h1 { font-size: 2.2rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.6rem; margin: 2rem 0 0.8rem; }
+    h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; }
+    p { margin: 1rem 0; }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5rem auto;
+    }
+    figcaption, .caption {
+      text-align: center;
+      color: var(--subtle);
+      font-size: 0.9rem;
+      margin-top: -0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+    code {
+      font-family: Menlo, Monaco, "Courier New", monospace;
+      font-size: 0.9em;
+    }
+    p code, li code {
+      background: var(--code-bg);
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+    }
+    blockquote {
+      border-left: 3px solid #ccc;
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--subtle);
+    }
+    .subtitle {
+      color: var(--subtle);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .katex-display { margin: 1.5rem 0; overflow-x: auto; }
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem auto;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    th { background: var(--code-bg); }
+
+    /* Algorithm / pseudocode block */
+    .algo {
+      margin: 2rem 0;
+      padding: 0;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      background: #fbfcfd;
+      font-family: 'source-serif-pro', Georgia, serif;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+    .algo .algo-title {
+      background: #eef2f6;
+      border-bottom: 1px solid #d0d7de;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      text-align: left;
+      margin: 0;
+    }
+    .algo .algo-section {
+      padding: 0.6rem 1rem 0.2rem;
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      color: #4a5260;
+      font-size: 0.9rem;
+    }
+    .algo .algo-side {
+      font-variant: normal;
+      letter-spacing: 0;
+      font-weight: 400;
+      color: var(--subtle);
+      font-style: italic;
+      margin-left: 0.4em;
+    }
+    .algo ol.algo-steps {
+      margin: 0.2rem 0 0.4rem 0;
+      padding-left: 3rem;
+    }
+    .algo ol.algo-steps li {
+      margin: 0.15rem 0;
+      padding-left: 0.25rem;
+    }
+    .algo ol.algo-steps li.algo-diff {
+      background: #fff7d6;
+      border-left: 3px solid #d4a017;
+      padding: 0.2rem 0.4rem 0.2rem 0.25rem;
+      margin-left: 0;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+    .algo .algo-comment {
+      color: var(--subtle);
+      font-style: italic;
+      font-size: 0.88em;
+    }
+    .algo table.algo-choices {
+      width: calc(100% - 2rem);
+      margin: 0.3rem 1rem 1rem;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .algo table.algo-choices td {
+      border: none;
+      border-top: 1px solid #e3e7ec;
+      padding: 0.45rem 0.6rem;
+      vertical-align: middle;
+    }
+    .algo table.algo-choices tr:first-child td { border-top: none; }
+    .algo .algo-tag {
+      display: inline-block;
+      padding: 0.1em 0.55em;
+      border-radius: 3px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .algo .tag-tq { background: #e8f0fe; color: #1a56c4; }
+    .algo .tag-eb { background: #e6f4ea; color: #1e7c3a; }
+    .algo .tag-eu { background: #efe9fb; color: #5b3aa6; }
+
+    /* Post tags (front-matter metadata for TDS) */
+    .post-tags {
+      margin: 2.5rem 0 1rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #eaeaea;
+      font-size: 0.85rem;
+      color: var(--subtle);
+    }
+    .post-tags .tag {
+      display: inline-block;
+      background: var(--code-bg);
+      color: var(--text);
+      padding: 0.15em 0.6em;
+      margin: 0 0.25em 0.3em 0;
+      border-radius: 12px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <article>
+    <h1 id="agentsmd">AGENTS.md</h1>
+
+<p>Guidance for AI coding agents (Copilot CLI, Claude Code, Codex CLI, etc.)
+working in this repo. The canonical, auto-loaded guidance is in
+<a href=".github/copilot-instructions.md"><code class="language-plaintext highlighter-rouge">.github/copilot-instructions.md</code></a> — read
+it before any non-trivial edit. This file is a cross-tool summary.</p>
+
+<h2 id="what-this-repo-is">What this repo is</h2>
+
+<p>A single blog post draft targeted at <strong>Towards Data Science (TDS)</strong> comparing
+<strong>EDEN</strong> and <strong>TurboQuant</strong>. The Jekyll site is only a local/preview
+convenience — the article will eventually be re-uploaded into TDS’s WordPress
+editor.</p>
+
+<ul>
+  <li>Draft entry point: <a href="/EDEN-vs-turboQuant-blog-preview/"><code class="language-plaintext highlighter-rouge">index.md</code></a></li>
+  <li>Working draft: <a href="draft-v2.md"><code class="language-plaintext highlighter-rouge">draft-v2.md</code></a></li>
+  <li>Source paper (submodule, read-only): <a href="paper/"><code class="language-plaintext highlighter-rouge">paper/</code></a> — references in <code class="language-plaintext highlighter-rouge">paper/refs.bib</code></li>
+  <li>Figures: <a href="figures/"><code class="language-plaintext highlighter-rouge">figures/</code></a></li>
+</ul>
+
+<h2 id="act-on-intent-not-on-commands">Act on intent, not on commands</h2>
+
+<p>Infer what the user wants from their phrasing and just do it:</p>
+
+<ul>
+  <li>“polish / tighten / proofread” → conservative copy-edit (see the
+<a href=".github/skills/tds-polish-pass/SKILL.md"><code class="language-plaintext highlighter-rouge">tds-polish-pass</code></a> skill).</li>
+  <li>“is this ready?” / “review for TDS” / “audit” → read-only submission
+audit (see the
+<a href=".github/skills/tds-submission-audit/SKILL.md"><code class="language-plaintext highlighter-rouge">tds-submission-audit</code></a> skill).</li>
+  <li>“add an image / dataset” → verify licence first; refuse unverified assets.</li>
+  <li>“add a citation” → use <a href="paper/refs.bib"><code class="language-plaintext highlighter-rouge">paper/refs.bib</code></a> or ask. Never invent.</li>
+</ul>
+
+<h2 id="non-negotiable-rules">Non-negotiable rules</h2>
+
+<ol>
+  <li><strong>Preserve the author’s voice.</strong> Do not rewrite into generic LLM prose.
+TDS rejects content that doesn’t “reflect the author’s ideas and
+expertise”. Author publishes under real name.</li>
+  <li><strong>Never fabricate</strong> facts, numbers, citations, benchmark results, or
+quotations. Flag missing sources with <code class="language-plaintext highlighter-rouge">&lt;!-- TODO: cite --&gt;</code>.</li>
+  <li><strong>Image licensing</strong>: every image must be commercially licensable AND
+correctly attributed in a caption. No children, no celebrities/real
+people in AI-generated images, no logos in the featured image.</li>
+  <li><strong>Dataset licensing</strong>: CC0 / CC BY / CC BY-SA or written permission.
+CC BY-NC and “research/educational use only” are <strong>not</strong> acceptable.</li>
+  <li><strong>Code</strong>: fenced code blocks only, never screenshots.</li>
+  <li><strong>No marketing language, no CTA buttons, no emoji, no clickbait.</strong></li>
+  <li><strong>No anonymous content.</strong> Single individual author, real name.</li>
+  <li><strong>Do not edit <a href="paper/"><code class="language-plaintext highlighter-rouge">paper/</code></a></strong> — it’s a read-only submodule.</li>
+</ol>
+
+<h2 id="editing-workflow">Editing workflow</h2>
+
+<ul>
+  <li>Small wording tweaks: edit in place, keep diffs minimal.</li>
+  <li>Larger restructuring: discuss in chat first; do not silently rewrite
+sections.</li>
+  <li>Before declaring “ready to submit”, run the submission audit (criteria
+in copilot-instructions.md).</li>
+</ul>
+
+<h2 id="local-commands">Local commands</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">install
+</span>bundle <span class="nb">exec </span>jekyll serve   <span class="c"># http://localhost:4000/EDEN-vs-turboQuant-blog-preview/</span>
+</code></pre></div></div>
+
+<p>Pushing to <code class="language-plaintext highlighter-rouge">master</code> auto-deploys the preview via
+<code class="language-plaintext highlighter-rouge">.github/workflows/deploy.yml</code>.</p>
+
+<h2 id="where-to-find-more">Where to find more</h2>
+
+<ul>
+  <li>Canonical Copilot instructions (auto-loaded):
+<a href=".github/copilot-instructions.md"><code class="language-plaintext highlighter-rouge">.github/copilot-instructions.md</code></a></li>
+  <li>Path-scoped instructions for blog Markdown (auto-applied to <code class="language-plaintext highlighter-rouge">*.md</code>):
+<a href=".github/instructions/tds-content.instructions.md"><code class="language-plaintext highlighter-rouge">.github/instructions/tds-content.instructions.md</code></a></li>
+</ul>
+
+
+    
+  </article>
+
+  <!-- KaTeX rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "\\[", right: "\\]", display: true}
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

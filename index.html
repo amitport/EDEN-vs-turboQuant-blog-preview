@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How a 2021 Quantization Algorithm Quietly Outperforms Its 2026 Successor</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <style>
+    :root {
+      --max-width: 740px;
+      --text: #292929;
+      --bg: #fff;
+      --subtle: #757575;
+      --accent: #1a8917;
+      --code-bg: #f6f8fa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'source-serif-pro', Georgia, Cambria, "Times New Roman", Times, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      font-size: 18px;
+    }
+    article {
+      max-width: var(--max-width);
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    h1 { font-size: 2.2rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.6rem; margin: 2rem 0 0.8rem; }
+    h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; }
+    p { margin: 1rem 0; }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5rem auto;
+    }
+    figcaption, .caption {
+      text-align: center;
+      color: var(--subtle);
+      font-size: 0.9rem;
+      margin-top: -0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+    code {
+      font-family: Menlo, Monaco, "Courier New", monospace;
+      font-size: 0.9em;
+    }
+    p code, li code {
+      background: var(--code-bg);
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+    }
+    blockquote {
+      border-left: 3px solid #ccc;
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--subtle);
+    }
+    .subtitle {
+      color: var(--subtle);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .katex-display { margin: 1.5rem 0; overflow-x: auto; }
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem auto;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    th { background: var(--code-bg); }
+
+    /* Algorithm / pseudocode block */
+    .algo {
+      margin: 2rem 0;
+      padding: 0;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      background: #fbfcfd;
+      font-family: 'source-serif-pro', Georgia, serif;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+    .algo .algo-title {
+      background: #eef2f6;
+      border-bottom: 1px solid #d0d7de;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      text-align: left;
+      margin: 0;
+    }
+    .algo .algo-section {
+      padding: 0.6rem 1rem 0.2rem;
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      color: #4a5260;
+      font-size: 0.9rem;
+    }
+    .algo .algo-side {
+      font-variant: normal;
+      letter-spacing: 0;
+      font-weight: 400;
+      color: var(--subtle);
+      font-style: italic;
+      margin-left: 0.4em;
+    }
+    .algo ol.algo-steps {
+      margin: 0.2rem 0 0.4rem 0;
+      padding-left: 3rem;
+    }
+    .algo ol.algo-steps li {
+      margin: 0.15rem 0;
+      padding-left: 0.25rem;
+    }
+    .algo ol.algo-steps li.algo-diff {
+      background: #fff7d6;
+      border-left: 3px solid #d4a017;
+      padding: 0.2rem 0.4rem 0.2rem 0.25rem;
+      margin-left: 0;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+    .algo .algo-comment {
+      color: var(--subtle);
+      font-style: italic;
+      font-size: 0.88em;
+    }
+    .algo table.algo-choices {
+      width: calc(100% - 2rem);
+      margin: 0.3rem 1rem 1rem;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .algo table.algo-choices td {
+      border: none;
+      border-top: 1px solid #e3e7ec;
+      padding: 0.45rem 0.6rem;
+      vertical-align: middle;
+    }
+    .algo table.algo-choices tr:first-child td { border-top: none; }
+    .algo .algo-tag {
+      display: inline-block;
+      padding: 0.1em 0.55em;
+      border-radius: 3px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .algo .tag-tq { background: #e8f0fe; color: #1a56c4; }
+    .algo .tag-eb { background: #e6f4ea; color: #1e7c3a; }
+    .algo .tag-eu { background: #efe9fb; color: #5b3aa6; }
+
+    /* Post tags (front-matter metadata for TDS) */
+    .post-tags {
+      margin: 2.5rem 0 1rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #eaeaea;
+      font-size: 0.85rem;
+      color: var(--subtle);
+    }
+    .post-tags .tag {
+      display: inline-block;
+      background: var(--code-bg);
+      color: var(--text);
+      padding: 0.15em 0.6em;
+      margin: 0 0.25em 0.3em 0;
+      border-radius: 12px;
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <article>
+    <h1 id="how-a-2021-quantization-algorithm-quietly-outperforms-its-2026-successor">How a 2021 Quantization Algorithm Quietly Outperforms Its 2026 Successor</h1>
+
+<p class="subtitle">One scale parameter determines accuracy in rotation-based vector quantization.</p>
+
+<p class="byline">By Amit Portnoy</p>
+
+<p><img src="/EDEN-vs-turboQuant-blog-preview/figures/feature.png" alt="A vector is snapped to a grid point before rotation (left); after rotation the grid aligns with the original space and the quantized point lands closer to the true value (right)." /></p>
+<p class="caption">Image by author, post-processed with ChatGPT</p>
+
+<p><em>TurboQuant</em> <a href="#ref3">[3]</a>, an online vector quantization method, drew wide public attention at ICLR 2026. For me, it looked very familiar: it overlaps heavily with <em>EDEN</em>, a quantization method first introduced as the 1-bit method <em>DRIVE</em> at NeurIPS 2021 <a href="#ref1">[1]</a> and generalized to arbitrary bit-widths at ICML 2022 <a href="#ref2">[2]</a>. Co-authored by myself, with Ran Ben-Basat, Yaniv Ben-Itzhak, Gal Mendelson, Michael Mitzenmacher, and Shay Vargaftik.</p>
+
+<p>The TurboQuant paper presents two variants: <em>TurboQuant-mse</em> and <em>TurboQuant-prod</em>. In a detailed new comparison <a href="#ref5">[5]</a> we show that TurboQuant-mse is a degenerate case of EDEN, and that the EDEN variants consistently outperform their counterparts.</p>
+
+<h2 id="how-eden-quantizes-a-vector">How EDEN quantizes a vector</h2>
+
+<p>Suppose you need to compress a $d$-dimensional vector $x$ (a gradient update, an embedding, a KV-cache entry) down to a few bits per coordinate. EDEN proceeds in four steps:</p>
+
+<ol>
+  <li><strong>Random rotation</strong> — Multiply by a random orthogonal matrix $\Pi$. After rotation the coordinates are identically distributed and, for large $d$, approximately Gaussian.</li>
+  <li><strong>Scalar quantization</strong> — Round each rotated coordinate to one of $2^b$ levels from a Lloyd–Max codebook trained on the <em>known</em> rotated coordinate distribution ($b$ is the target number of bits per coordinate).</li>
+  <li><strong>Scale</strong> — Multiply by a scale factor $S$.</li>
+  <li><strong>Inverse rotation</strong> — Apply $\Pi^\top$ to recover an approximation $\hat{x}$ of the original vector.</li>
+</ol>
+
+<p>While earlier works (e.g., Suresh et al. (2017) <a href="#ref6">[6]</a>) used rotation mainly to shrink the coordinates’ <em>dynamic range</em> (the gap between the largest and smallest coordinate value), EDEN <a href="#ref1">[1]</a> was, to the best of our knowledge, the first quantization scheme to exploit a stronger fact about random rotation: the post-rotation coordinates follow a known distribution, which lets us use a <em>deterministic</em> quantizer paired with a closed-form scale that, depending on the application, either minimizes MSE or makes the estimate unbiased. Both scales are derived analytically and the construction yields an asymptotic MSE reduction over the previous approach.</p>
+
+<p>Concretely, EDEN’s two variants differ only in the choice of $S$:</p>
+
+<ul>
+  <li><strong>EDEN-biased</strong> — sets $S$ to the closed-form value that minimizes the reconstruction MSE.</li>
+  <li><strong>EDEN-unbiased</strong> — chooses $S$ so the decompressed output is correct on average ($\mathbb{E}[\hat{x}] = x$), which matters particularly whenever you average many quantized vectors (e.g., distributed training, attention).</li>
+</ul>
+
+<p>Lined up against EDEN, TurboQuant-mse matches at every step except one: where EDEN derives the scale $S$ analytically, TurboQuant-mse, although it targets MSE minimization, skips the optimized scaling.</p>
+
+<p>The pseudocode below, from our comparison paper <a href="#ref5">[5]</a>, shows the three side by side.</p>
+
+<figure class="algo">
+  <figcaption class="algo-title">EDEN with three choices of $S$</figcaption>
+
+  <div class="algo-section">Setup</div>
+  <ol class="algo-steps" start="1">
+    <li>Construct the Lloyd–Max codebook $c_1, \dots, c_{2^b}$ for the rotated coordinate distribution &nbsp;<br /><span class="algo-comment">// one-time, offline</span></li>
+    <li>Generate shared random rotation matrix $\Pi$ (from a shared seed).</li>
+  </ol>
+
+  <div class="algo-section">Quantize$(x)$ <span class="algo-side">sender</span></div>
+  <ol class="algo-steps" start="3">
+    <li>$y \leftarrow \Pi x$ &nbsp;<span class="algo-comment">// rotate</span></li>
+    <li>For each coordinate $j$:&nbsp; $\mathrm{idx}_j \leftarrow \arg\min_k |y_j - c_k|$,&nbsp; $q_j \leftarrow c_{\mathrm{idx}_j}$ &nbsp;<span class="algo-comment">// quantize to nearest centroid</span></li>
+    <li class="algo-diff">Choose reconstruction scale $S$ &nbsp;<span class="algo-comment">// the only line that differs across variants</span></li>
+    <li>Send $(\mathrm{idx}, S)$ &nbsp;<span class="algo-comment">// transmit indices and scale</span></li>
+  </ol>
+
+  <div class="algo-section">Dequantize$(\mathrm{idx}, S)$<span class="algo-side">receiver</span></div>
+  <ol class="algo-steps" start="7">
+    <li>Regenerate $\Pi$ from the same seed.</li>
+    <li>$q_j \leftarrow c_{\mathrm{idx}_j}$ for each $j$ &nbsp;<span class="algo-comment">// look up centroids from shared codebook</span></li>
+    <li>Output $\hat{x} \leftarrow S \cdot \Pi^\top q$ &nbsp;<span class="algo-comment">// scale, then inverse-rotate</span></li>
+  </ol>
+
+  <div class="algo-section">Choices of $S$ (line 5)</div>
+  <table class="algo-choices">
+    <tr><td><span class="algo-tag tag-eb">EDEN-biased</span></td><td>$S \leftarrow \langle y, q \rangle / \|q\|^2$</td><td class="algo-comment">minimizes MSE</td></tr>
+    <tr><td><span class="algo-tag tag-eu">EDEN-unbiased</span></td><td>$S \leftarrow \|x\|^2 / \langle y, q \rangle$</td><td class="algo-comment">makes $\mathbb{E}[\hat{x}] = x$</td></tr>
+    <tr><td><span class="algo-tag tag-tq">TurboQuant-mse</span></td><td>$S \leftarrow 1$</td><td class="algo-comment">fixed</td></tr>
+  </table>
+</figure>
+<p class="caption">Figure 1: EDEN's pseudocode instantiated for EDEN-biased, EDEN-unbiased, and TurboQuant-mse. The three are identical except at step 5: the choice of $S$. Image by author <a href="#ref5">[5]</a>.</p>
+
+<h2 id="why-the-optimal-scale-is-worth-it">Why the optimal scale is worth it</h2>
+
+<p>The value of applying proper scale $S$ grows with bit-width. At $b = 1$ bit, the gap is marginal. At $d = 128$ and $b = 4$ bits, EDEN-biased reduces MSE by 2.25% over TurboQuant-mse, and these are the bit-widths practitioners actually use for embeddings and KV caches.</p>
+
+<p>Across dimensions 16 to 4096 and all tested bit-widths $b \in {1,2,3,4}$, EDEN-biased vNMSE (vector-normalized MSE, $\mathbb{E}[|x - \hat{x}|^2] / |x|^2$) falls below TurboQuant-mse’s in every case (Figure 2). As dimension grows very large, the optimal $S$ approaches 1 and the two algorithms converge, but at practical dimensions (128–1024), the gap persists.</p>
+
+<p><img src="/EDEN-vs-turboQuant-blog-preview/figures/vnmse-eden-biased-vs-turboquant-mse.png" alt="vNMSE vs. dimension for EDEN-biased and TurboQuant-mse at b=1,2,3,4" /></p>
+<p class="caption">Figure 2: vNMSE vs. dimension comparing EDEN-biased and TurboQuant-mse across bit-widths b = 1, 2, 3, 4 (panels left to right). EDEN-biased (which optimizes the scale factor S) achieves lower error than TurboQuant-mse (which fixes S = 1) at every tested dimension. The curves converge at high dimension as the optimal S approaches 1. Image by author <a href="#ref5">[5]</a>.</p>
+
+<h2 id="unbiased-compression-saving-more-than-a-full-bit">Unbiased compression: saving more than a full bit</h2>
+
+<p>The results above concern the biased (MSE-minimizing) variants. Now consider the unbiased case, where applications such as distributed training, approximate attention, or inner-product retrieval need $\mathbb{E}[\hat{x}] = x$ because they average many quantized vectors.</p>
+
+<p>EDEN-unbiased uses the same single-pass algorithm as EDEN-biased, just with $S$ chosen for bias correction. TurboQuant’s unbiased variant, TurboQuant-prod, takes a different route: it spends $(b-1)$ bits on the biased TurboQuant-mse step and reserves 1 bit for a QJL (Quantized Johnson–Lindenstrauss) <a href="#ref4">[4]</a> correction on the residual (QJL is similar to EDEN at $b=1$, but with higher variance).</p>
+
+<p>EDEN-unbiased outperforms TurboQuant-prod in every tested configuration, and by a substantial margin. The gap traces to three structural advantages of EDEN’s single-pass design:</p>
+
+<ol>
+  <li><strong>EDEN optimizes the scale.</strong> TurboQuant-prod inherits TurboQuant-mse’s $S=1$ first stage, so it carries the same MSE penalty.</li>
+  <li><strong>EDEN’s 1-bit construction has lower variance than QJL.</strong> In large dimensions, EDEN’s 1-bit vNMSE converges to $\pi/2 - 1 \approx 0.57$ <a href="#ref1">[1]</a>, while QJL’s converges to $\pi/2 \approx 1.57$ <a href="#ref4">[4]</a>, roughly 2.75× higher.</li>
+  <li><strong>EDEN spends the full bit budget on a single unbiased quantizer.</strong> TurboQuant-prod splits the budget into $(b-1)$ biased bits plus 1 residual bit, which empirically underperforms spending all $b$ bits on a single unbiased quantizer <a href="#ref5">[5]</a>.</li>
+</ol>
+
+<p>These effects compound. The result: <strong>1-, 2-, and 3-bit EDEN-unbiased are each more accurate than 2-, 3-, and 4-bit TurboQuant-prod, respectively</strong> (Figure 3). By swapping in EDEN you can drop a bit per coordinate and still match TurboQuant-prod’s accuracy.</p>
+
+<p><img src="/EDEN-vs-turboQuant-blog-preview/figures/vnmse-eden-unbiased-vs-turboquant-prod.png" alt="vNMSE vs. dimension for EDEN-unbiased and TurboQuant-prod at b=1,2,3,4" /></p>
+<p class="caption">Figure 3: vNMSE vs. dimension comparing EDEN-unbiased and TurboQuant-prod across bit-widths b = 1, 2, 3, 4 (panels left to right). EDEN-unbiased achieves lower error at every dimension. The gap is large enough that EDEN with b bits often outperforms TurboQuant-prod with b + 1 bits. Image by author <a href="#ref5">[5]</a>.</p>
+
+<h2 id="on-turboquants-own-benchmarks">On TurboQuant’s own benchmarks</h2>
+
+<p>The same picture holds on the standard ANN benchmarks TurboQuant evaluates on, Stanford’s <a href="https://nlp.stanford.edu/projects/glove/">GloVe pre-trained word vectors</a> (Open Data Commons <a href="https://opendatacommons.org/licenses/pddl/">Public Domain Dedication and License</a> v1.0) and Qdrant’s <a href="https://huggingface.co/datasets/Qdrant/dbpedia-entities-openai3-text-embedding-3-large-3072-1M"><code class="language-plaintext highlighter-rouge">dbpedia-entities-openai3-text-embedding-3-large</code></a> embeddings (Apache 2.0), using TurboQuant’s published evaluation code:</p>
+
+<p>EDEN-biased achieves lower MSE than TurboQuant-mse, EDEN-unbiased achieves markedly lower inner-product error than TurboQuant-prod, and nearest-neighbor recall on both datasets favors EDEN (Figure 4).</p>
+
+<p><img src="/EDEN-vs-turboQuant-blog-preview/figures/recall-comparison.png" alt="Nearest-neighbor recall comparison on GloVe and OpenAI3 embeddings at 2 and 4 bits" /></p>
+<p class="caption">Figure 4: Nearest-neighbor recall on GloVe and OpenAI3 embeddings at 2 and 4 bits per coordinate. EDEN-unbiased outperforms TurboQuant-prod across all four settings. Image by author <a href="#ref5">[5]</a>.</p>
+
+<h2 id="takeaway-use-eden-optimal-scaling-matters">Takeaway: use EDEN; optimal scaling matters</h2>
+
+<p>EDEN’s scale connects the known post-rotation distribution to an analytically optimal quantizer. TurboQuant-mse keeps EDEN’s rotation and the codebook but pins $S = 1$, which is what makes it a strictly weaker special case. TurboQuant-prod adds a 1-bit QJL stage on top of that, where EDEN-unbiased gets the same property, with better accuracy, by just picking a bias-correcting scale.</p>
+
+<ul>
+  <li><strong>For MSE-targeted compression</strong> (model weight quantization, nearest-neighbor search, KV cache): EDEN-biased computes the optimal scale $S$ and consistently beats TurboQuant-mse (which <em>is</em> EDEN with $S=1$ fixed).</li>
+  <li><strong>For unbiased estimation</strong> (distributed mean estimation, approximate attention, inner-product retrieval): EDEN-unbiased substantially outperforms TurboQuant-prod’s bit-splitting strategy, by margins worth more than a full bit per coordinate.</li>
+</ul>
+
+<p>EDEN was originally developed for distributed mean estimation in federated and distributed training. Subsequent work has, for example, applied it to embedding compression for document re-ranking (<em>SDR</em>, 2022 <a href="#ref8">[8]</a>), adapted it for NVFP4 LLM training (<em>MS-EDEN</em> in <em>Quartet II</em>, 2026 <a href="#ref10">[10]</a>), generalized it to vector quantization for data-free LLM weight compression (<em>HIGGS</em>, 2025 <a href="#ref9">[9]</a>), which was then used for KV-cache compression (<em>AQUA-KV</em>, 2025 <a href="#ref11">[11]</a>).</p>
+
+<p>EDEN implementations are available: in <a href="https://github.com/amitport/EDEN-Distributed-Mean-Estimation">PyTorch and TensorFlow</a>, in <a href="https://github.com/securefederatedai/openfl">Intel’s OpenFL</a> <a href="#ref7">[7]</a>, and its 1-bit variant in Google’s <a href="https://github.com/google/fedjax">FedJax</a>, <a href="https://github.com/google-research/federated">TensorFlow Federated</a>, and <a href="https://github.com/tensorflow/model-optimization/pull/905">TensorFlow Model Optimization</a>.</p>
+
+<p>For the full technical comparison analysis with TurboQuant (all figures, detailed experimental methodology), see our note <a href="#ref5">[5]</a>.</p>
+
+<p>For the original derivations, proofs, and further extensions, see our original papers <a href="#ref1">[1]</a> <a href="#ref2">[2]</a>.</p>
+
+<h2 id="references">References</h2>
+
+<p><a id="ref1"></a>[1] S. Vargaftik, R. Ben-Basat, A. Portnoy, G. Mendelson, Y. Ben-Itzhak, M. Mitzenmacher, <a href="https://proceedings.neurips.cc/paper/2021/hash/0397758f8990c1b41b81b43ac389ab9f-Abstract.html">DRIVE: One-bit Distributed Mean Estimation</a> (2021), NeurIPS 2021.</p>
+
+<p><a id="ref2"></a>[2] S. Vargaftik, R. Ben-Basat, A. Portnoy, G. Mendelson, Y. Ben-Itzhak, M. Mitzenmacher, <a href="https://proceedings.mlr.press/v162/vargaftik22a.html">EDEN: Communication-Efficient and Robust Distributed Mean Estimation for Federated Learning</a> (2022), ICML 2022.</p>
+
+<p><a id="ref3"></a>[3] A. Zandieh, M. Daliri, A. Hadian, V. Mirrokni, <a href="https://openreview.net/forum?id=tO3ASKZlok">TurboQuant: Online Vector Quantization with Near-optimal Distortion Rate</a> (2026), ICLR 2026.</p>
+
+<p><a id="ref4"></a>[4] A. Zandieh, M. Daliri, I. Han, <a href="https://arxiv.org/abs/2406.03482">QJL: 1-Bit Quantized JL Transform for KV Cache Quantization with Zero Overhead</a> (2024), arXiv:2406.03482.</p>
+
+<p><a id="ref5"></a>[5] R. Ben-Basat, Y. Ben-Itzhak, G. Mendelson, M. Mitzenmacher, A. Portnoy, S. Vargaftik, <a href="https://arxiv.org/abs/2604.18555">A Note on TurboQuant and the Earlier DRIVE/EDEN Line of Work</a> (2026), arXiv:2604.18555.</p>
+
+<p><a id="ref6"></a>[6] A. T. Suresh, F. X. Yu, S. Kumar, H. B. McMahan, <a href="https://proceedings.mlr.press/v70/suresh17a.html">Distributed Mean Estimation with Limited Communication</a> (2017), ICML 2017.</p>
+
+<p><a id="ref7"></a>[7] VMware Open Source Blog, <a href="https://blogs.vmware.com/opensource/2022/11/16/vmware-research-groups-eden-becomes-part-of-openfl/">VMware Research Group’s EDEN Becomes Part of OpenFL</a> (November 2022).</p>
+
+<p><a id="ref8"></a>[8] N. Cohen, A. Portnoy, B. Fetahu, A. Ingber, <a href="https://aclanthology.org/2022.acl-long.457/">SDR: Efficient Neural Re-ranking using Succinct Document Representation</a> (2022), ACL 2022.</p>
+
+<p><a id="ref9"></a>[9] V. Malinovskii, A. Panferov, I. Ilin, H. Guo, P. Richtárik, D. Alistarh, <a href="https://aclanthology.org/2025.naacl-long.543/">HIGGS: Pushing the Limits of Large Language Model Quantization via the Linearity Theorem</a> (2025), NAACL 2025.</p>
+
+<p><a id="ref10"></a>[10] A. Panferov, E. Schultheis, S. Tabesh, D. Alistarh, <a href="https://arxiv.org/abs/2601.22813">Quartet II: Accurate LLM Pre-Training in NVFP4 by Improved Unbiased Gradient Estimation</a> (2026), arXiv:2601.22813.</p>
+
+<p><a id="ref11"></a>[11] A. Shutova, V. Malinovskii, V. Egiazarian, D. Kuznedelev, D. Mazur, N. Surkov, I. Ermakov, D. Alistarh, <a href="https://arxiv.org/abs/2501.19392">Cache Me If You Must: Adaptive Key-Value Quantization for Large Language Models</a> (2025), ICML 2025.</p>
+
+
+
+    
+    <div class="post-tags">
+      <strong>Tags:</strong>
+      <span class="tag">vector-quantization</span><span class="tag">kv-cache</span><span class="tag">distributed-training</span><span class="tag">llm-inference</span>
+    </div>
+    
+  </article>
+
+  <!-- KaTeX rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "\\[", right: "\\]", display: true}
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>
